@@ -50,7 +50,8 @@ on_boot() {
         /usr/bin/udevadm trigger --action=add --type=devices
     else # use busybox mdev as fallback:
         busybox mdev -s
-        echo /sbin/mdev > /proc/sys/kernel/hotplug
+        F=/proc/sys/kernel/hotplug
+        test -w $F && { echo /sbin/mdev > $F; }
     fi
 
     echo_color 3 setting hostname...
