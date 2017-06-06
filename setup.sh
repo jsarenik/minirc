@@ -22,8 +22,8 @@ install -Dm644 _minirc "$ROOT/usr/share/zsh/site-functions/_minirc"
 install -Dm755 shutdown.sh "$ROOT/sbin/shutdown"
 
 cd ../cgroupfs-mount
-install -Dm755 groupfs-mount.sh "$ROOT/sbin/cgroupfs-mount"
-install -Dm755 groupfs-umount.sh "$ROOT/sbin/cgroupfs-umount"
+install -Dm755 cgroupfs-mount "$ROOT/sbin/cgroupfs-mount"
+install -Dm755 cgroupfs-umount "$ROOT/sbin/cgroupfs-umount"
 
 echo "==> Linking busybox to /sbin/{init,halt,poweroff,reboot}"
 for i in init halt poweroff reboot; do
