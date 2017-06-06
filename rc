@@ -100,6 +100,9 @@ on_boot() {
 	find /sys -name 'modalias' -type f -exec cat '{}' + | sort -u | xargs modprobe -b -a 2>/dev/null
 	find /sys -name 'modalias' -type f -exec cat '{}' + | sort -u | xargs modprobe -b -a 2>/dev/null
 
+	echo "Setting font"
+	setfonts
+
 	echo "Mounting /dev/pts"
 	if ! mountpoint -q /dev/pts; then
 		mount -n -t devpts -o noexec,nosuid,gid=5,mode=0620 devpts /dev/pts

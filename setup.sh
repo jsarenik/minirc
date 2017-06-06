@@ -20,6 +20,7 @@ echo "==> Installing extras"
 cd extra
 install -Dm644 _minirc "$ROOT/usr/share/zsh/site-functions/_minirc"
 install -Dm755 shutdown.sh "$ROOT/sbin/shutdown"
+install -Dm755 setfonts "$ROOT/sbin/setfonts"
 
 cd ../cgroupfs-mount
 install -Dm755 cgroupfs-mount "$ROOT/sbin/cgroupfs-mount"

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for i in 1 2 3 4 5
+do
+  setfont -C /dev/tty$i ter-v32n
+done
