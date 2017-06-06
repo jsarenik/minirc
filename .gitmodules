@@ -1,0 +1,3 @@
+[submodule "cgroupfs-mount"]
+	path = cgroupfs-mount
+	url = https://github.com/tianon/cgroupfs-mount.git
