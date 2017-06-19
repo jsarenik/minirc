@@ -1,11 +1,40 @@
 #!/bin/sh
 
-chgrp tty /dev/tty
+#for i in 1 2 3 4 5
+#do
+#  setfont -C /dev/tty$i ter-v32n
+#done
+
+while read module
+do
+  modprobe $module
+done < /etc/modules-load.d/loop.conf
+modprobe pl2303
+modprobe cp210x
+modprobe usb-storage
+
+update-dev
+
+devgr() {
+  grp=$1
+  shift
+  chgrp $grp $*
+  chmod g+rw $*
+}
+
 chmod a+rw /dev/null
 chmod a+r /dev/urandom
 chmod a+r /dev/random
-chgrp tty /dev/ptmx
+devgr tty /dev/tty
+devgr tty /dev/ptmx
+devgr uucp /dev/ttyU*
 chgrp -R input /dev/input
+chgrp -R audio /dev/snd
+chmod -R g+rw /dev/snd
+
+alsactl restore
+
+swapon -a
 
 #/usr/lib/systemd/systemd-udevd --daemon
 #/usr/bin/udevadm trigger --action=add --type=subsystems
@@ -22,7 +51,7 @@ else
   touch $random_seed
 fi
 chmod 600 $random_seed
-dd if=/dev/urandom of=$random_seed count=1 bs=512
+dd if=/dev/urandom of=$random_seed count=1 bs=512 1>/dev/null 2>&1
 
 brctl addbr br0
 brctl addif br0 eth0
@@ -34,16 +63,18 @@ ip r a default via 192.168.1.1
 #ip r a default via 10.0.0.81
 
 nohup busybox sh /home/jasan/bin/estenie.sh >/tmp/estenie.log 2>&1 &
-
-# Settings for Redis
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo 1 > /proc/sys/vm/overcommit_memory
 echo 512 > /proc/sys/net/core/somaxconn
 
-# Set brightness
 echo 8 > /sys/class/backlight/acpi_video0/brightness
 
 busybox ntpd
 busybox crond
 
 loadkeys dvorak-nocaps
+#        pgrep sshd > /dev/null;;
+#    *)
+#        default_poll "$@";;  # keep the default as fall-back
+#    esac
+#}
