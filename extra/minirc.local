@@ -13,7 +13,7 @@ modprobe pl2303
 modprobe cp210x
 modprobe usb-storage
 
-update-dev
+#update-dev
 
 devgr() {
   grp=$1
@@ -22,15 +22,15 @@ devgr() {
   chmod g+rw $*
 }
 
-chmod a+rw /dev/null
-chmod a+r /dev/urandom
-chmod a+r /dev/random
-devgr tty /dev/tty
-devgr tty /dev/ptmx
-devgr uucp /dev/ttyU*
-chgrp -R input /dev/input
-chgrp -R audio /dev/snd
-chmod -R g+rw /dev/snd
+#chmod a+rw /dev/null
+#chmod a+r /dev/urandom
+#chmod a+r /dev/random
+#devgr tty /dev/tty
+#devgr tty /dev/ptmx
+##devgr uucp /dev/ttyU*
+#chgrp -R input /dev/input
+#chgrp -R audio /dev/snd
+#chmod -R g+rw /dev/snd
 
 alsactl restore
 

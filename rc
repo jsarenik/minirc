@@ -20,7 +20,7 @@ custom_poll()    { default_poll    "$@"; }
 . /etc/minirc.conf
 
 on_boot() {
-    mount > /mountboot
+    #mount > /mountboot
     #===================
     # mount the API filesystem
     # /proc, /sys, /run, /dev, /run/lock, /dev/pts, /dev/shm
@@ -28,7 +28,7 @@ on_boot() {
     mountpoint -q /proc    || mount -t proc proc /proc -o nosuid,noexec,nodev
     mountpoint -q /sys     || mount -t sysfs sys /sys -o nosuid,noexec,nodev
     mountpoint -q /run     || mount -t tmpfs run /run -o mode=0755,nosuid,nodev
-    mountpoint -q /dev     || mount -t devtmpfs dev /dev -o mode=0755,nosuid
+    #mountpoint -q /dev     || mount -t devtmpfs dev /dev -o mode=0755,nosuid
     mkdir -p /dev/pts /dev/shm 2>/dev/null
     mountpoint -q /dev/pts || mount -t devpts devpts /dev/pts -o mode=0620,gid=5,nosuid,noexec
     mountpoint -q /dev/shm || mount -t tmpfs shm /dev/shm -o mode=1777,nosuid,nodev
@@ -163,9 +163,9 @@ on_shutdown() {
     # shut down udev
     echo_color 3 shutting down udev...
     if [ "$UDEV" = systemd ]; then
-        killall systemd-udevd
+        killall systemd-udevd 2>/dev/null
     elif [ "$UDEV" = eudev ]; then
-        killall udevd
+        killall udevd 2>/dev/null
     fi
 
     #===================
@@ -188,7 +188,7 @@ default_start() {
     dbus)
         mkdir -p /run/dbus &&
             dbus-uuidgen --ensure &&
-            dbus-daemon --system;;
+            dbus-daemon --system --print-address > /tmp/dbus-address;;
     iptables)
         iptables-restore < /etc/iptables/iptables.rules;;
     sshd)
@@ -232,16 +232,15 @@ default_stop() {
     alsa)
         alsactl store;;
     dbus)
-        killall dbus-launch
-        killall dbus-daemon
-        rm /run/dbus/pid;;
+        killall dbus-launch 2>/dev/null
+        killall dbus-daemon 2>/dev/null && rm /run/dbus/pid;;
     iptables)
         for table in $(cat /proc/net/ip_tables_names); do
             iptables-restore < /var/lib/iptables/empty-"$table".rules
         done;;
     *)
         # fallback: kill all processes with the name of the command
-        killall "$1";;
+        killall "$1" 2>/dev/null;;
     esac
 }
 

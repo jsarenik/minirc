@@ -1,0 +1,15 @@
+#!/bin/sh
+echo "Loading kernel modules for detected hardware"
+#env -i /sbin/mdev -s
+# mdev -s does not poke network interfaces or usb devices so we need to do it here.
+for i in /sys/class/net/*/uevent; do printf 'add' > "$i"; done 2>/dev/null; unset i
+for i in /sys/bus/usb/devices/*; do
+	case "${i##*/}" in
+		[0-9]*-[0-9]*)
+			printf 'add' > "$i/uevent"
+		;;
+	esac
+done; unset i
+# Load kernel modules, run twice.
+find /sys -name 'modalias' -type f -exec cat '{}' + | sort -u | xargs modprobe -b -a 2>/dev/null
+find /sys -name 'modalias' -type f -exec cat '{}' + | sort -u | xargs modprobe -b -a 2>/dev/null
