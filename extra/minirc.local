@@ -22,15 +22,15 @@ devgr() {
   chmod g+rw $*
 }
 
-#chmod a+rw /dev/null
-#chmod a+r /dev/urandom
-#chmod a+r /dev/random
-#devgr tty /dev/tty
-#devgr tty /dev/ptmx
-##devgr uucp /dev/ttyU*
-#chgrp -R input /dev/input
-#chgrp -R audio /dev/snd
-#chmod -R g+rw /dev/snd
+chmod a+rw /dev/null
+chmod a+r /dev/urandom
+chmod a+r /dev/random
+devgr tty /dev/tty
+devgr tty /dev/ptmx
+devgr uucp /dev/ttyU*
+chgrp -R input /dev/input
+chgrp -R audio /dev/snd
+chmod -R g+rw /dev/snd
 
 alsactl restore
 
@@ -53,24 +53,56 @@ fi
 chmod 600 $random_seed
 dd if=/dev/urandom of=$random_seed count=1 bs=512 1>/dev/null 2>&1
 
-brctl addbr br0
-brctl addif br0 eth0
-ip a a 192.168.1.5/24 dev br0
+#brctl addbr br0
+#brctl addif br0 eth0
+#ip a a 192.168.1.5/24 brd + dev br0
+#ip a a 192.168.1.5/24 brd + dev eth0
 #ip a a 10.0.0.240/24 dev br0
 ip link set eth0 up
-ip link set br0 up
-ip r a default via 192.168.1.1
+###ip link set eth0 mtu 1494
+#ip link set br0 up
+#ip link set br0 mtu 1494
+#ip r a default via 192.168.1.1
 #ip r a default via 10.0.0.81
+
+###
+#ip link add virtual0 link eth0 type macvlan
+#ip link set virtual0 address a8:20:66:3f:19:10
+#ip a a 192.168.1.5/24 brd + dev virtual0
+#ip n a 192.168.1.1 dev virtual0 lladdr 00:22:b0:5f:cc:ee
+
+#ip link add virtual1 link eth0 type macvlan
+#ip link set virtual1 address ee:de:21:8c:f3:c2
+#ip a a 192.168.3.3/24 brd + dev virtual1
+#ip n a 192.168.3.1 dev virtual1 lladdr d0:63:b4:00:d1:dc
+ip a a 10.0.0.102/24 brd + dev eth0
+
+#ip l set virtual0 up
+#ip r a default via 192.168.1.1
+ip r a default via 10.0.0.81
+
+#ip l set virtual1 up
+
+#/root/routing-mini.sh
+#/sbin/wshaper.htb-virtual1
 
 nohup busybox sh /home/jasan/bin/estenie.sh >/tmp/estenie.log 2>&1 &
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo 1 > /proc/sys/vm/overcommit_memory
 echo 512 > /proc/sys/net/core/somaxconn
 
+echo 65 > /proc/sys/net/ipv4/ip_default_ttl
+
 echo 8 > /sys/class/backlight/acpi_video0/brightness
 
 busybox ntpd
 busybox crond
+#bftpd -d
+vsftpd /etc/vsftpd.conf
+#/sbin/wshaper.htb
+
+mkdir /var/run/nscd
+nscd >/dev/null 2>&1
 
 loadkeys dvorak-nocaps
 #        pgrep sshd > /dev/null;;

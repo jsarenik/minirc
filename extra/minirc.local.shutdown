@@ -1,6 +1,10 @@
 #!/bin/sh
 killall systemd-udevd 2>/dev/null
 
+pkill acpid
+pkill bftpd
+pkill vsftpd
+pkill nscd
 alsactl store
 # Carry a random seed from shut-down to start-up
 # Save the whole entropy pool
@@ -10,4 +14,4 @@ touch $random_seed
 chmod 600 $random_seed
 dd if=/dev/urandom of=$random_seed count=1 bs=512
 fuser -vvm /run | while read pid; do ps $pid; done
-sleep 5
+#sleep 5
