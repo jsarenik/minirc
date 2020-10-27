@@ -1,21 +1,8 @@
 #!/bin/sh
-# This file is executed on boot to initialize the system and can also be run by
-# the user to start/stop daemons.
-
-# Fallback Configuration Values, to be able to run even with a broken, deleted
-# or outdated minirc.conf:
-DAEMONS="syslog-ng iptables alsa crond dbus wpa_supplicant dhcpcd sshd privoxy polipo acpid mpd vsftpd lighttpd ntpd haveged"
-ENABLED="@syslog-ng @crond @dhcpcd @sshd"
 UDEV="busybox"
 NETWORK_INTERFACE="eth0"
 WIFI_INTERFACE="wlan0"
 HOSTNAME="$(cat /etc/hostname)"
-
-# User-definable start/stop/restart/poll functions which fall back to defaults
-custom_restart() { default_restart "$@"; }
-custom_start()   { default_start   "$@"; }
-custom_stop()    { default_stop    "$@"; }
-custom_poll()    { default_poll    "$@"; }
 
 . /etc/minirc.conf
 
